@@ -155,10 +155,15 @@ void playPluck(const ADSR <CONTROL_RATE, AUDIO_RATE>& env,const Oscil <TABLE_CEL
     } else {
         if (vol > 200){
             if (prev <= 200) {
-                env.setTimes(20, 20, 20, 0);
+                env.setTimes(20, 20, 60000, 20);
                 env.setLevels(((vol)), ((vol)), ((vol)>>2),0);
                 env.noteOn(); 
             }
+            osc.setFreq(freq);
+        }  else {
+         //  if (prev >= 200) {
+              env.noteOff();
+         // }
         }
     }
 }
@@ -219,6 +224,8 @@ void buttonsTune(bool pinState, bool * prevState, float * noteOpen, int cents){
 }
 
 void buttonsControl() {
+    // Serial.print(modAction);
+    // Serial.println(modSustain);
   if (!digitalRead(PIN_WAVE)) {                   // wave button is pressed
       if (prevPressedWave) {                      // for a while
         if (!digitalRead(PIN_OCTAVE_LOW_DOWN)){   // if low oct is pressed
@@ -269,16 +276,16 @@ void buttonsControl() {
         }
         prevPressedWave = false;
       }
+      buttonsTune(digitalRead(PIN_NOTE_HIGH_DOWN), &prevPressedNoteHighDown, &open_note_y, -100);
+      buttonsTune(digitalRead(PIN_NOTE_HIGH_UP), &prevPressedNoteHighUp, &open_note_y, 100);
+      buttonsTune(digitalRead(PIN_NOTE_LOW_DOWN), &prevPressedNoteLowDown, &open_note, -100);
+      buttonsTune(digitalRead(PIN_NOTE_LOW_UP), &prevPressedNoteLowUp, &open_note, 100);
+      buttonsTune(digitalRead(PIN_OCTAVE_HIGH_DOWN), &prevPressedOctaveHighDown, &open_note_y, -1200);
+      buttonsTune(digitalRead(PIN_OCTAVE_HIGH_UP), &prevPressedOctaveHighUp, &open_note_y, 1200);
+      buttonsTune(digitalRead(PIN_OCTAVE_LOW_DOWN), &prevPressedOctaveLowDown, &open_note, -1200);
+      buttonsTune(digitalRead(PIN_OCTAVE_LOW_UP), &prevPressedOctaveLowUp, &open_note, 1200);
   }
   
-  buttonsTune(digitalRead(PIN_NOTE_HIGH_DOWN), &prevPressedNoteHighDown, &open_note_y, -100);
-  buttonsTune(digitalRead(PIN_NOTE_HIGH_UP), &prevPressedNoteHighUp, &open_note_y, 100);
-  buttonsTune(digitalRead(PIN_NOTE_LOW_DOWN), &prevPressedNoteLowDown, &open_note, -100);
-  buttonsTune(digitalRead(PIN_NOTE_LOW_UP), &prevPressedNoteLowUp, &open_note, 100);
-  buttonsTune(digitalRead(PIN_OCTAVE_HIGH_DOWN), &prevPressedOctaveHighDown, &open_note_y, -1200);
-  buttonsTune(digitalRead(PIN_OCTAVE_HIGH_UP), &prevPressedOctaveHighUp, &open_note_y, 1200);
-  buttonsTune(digitalRead(PIN_OCTAVE_LOW_DOWN), &prevPressedOctaveLowDown, &open_note, -1200);
-  buttonsTune(digitalRead(PIN_OCTAVE_LOW_UP), &prevPressedOctaveLowUp, &open_note, 1200);
 
   /*
   if (!digitalRead(PIN_NOTE_HIGH_DOWN)) {
